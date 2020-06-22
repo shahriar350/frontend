@@ -17,7 +17,8 @@ export default {
       { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Roboto+Condensed&family=Roboto:wght@300;400;500;700&display=swap' },
     ]
   },
   /*
@@ -30,6 +31,7 @@ export default {
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: [
+    { src: '~/plugins/laravel-echo', ssr:false},
   ],
   /*
   ** Nuxt.js dev-modules
@@ -49,11 +51,18 @@ export default {
   ** Axios module configuration
   ** See https://axios.nuxtjs.org/options
   */
-  axios: {},
+  axios: {
+    proxy: true,
+    withCredentials: true
+  },
+  proxy: {
+    '/api/': {target: 'http://127.0.0.1:8000/api',pathRewrite: { '^/api': '' }}
+  },
   /*
   ** Build configuration
   ** See https://nuxtjs.org/api/configuration-build/
   */
   build: {
-  }
+  },
+
 }
