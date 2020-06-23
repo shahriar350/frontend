@@ -1,9 +1,15 @@
 <template>
-  <div>
+  <div class="px-3">
+    <top_section></top_section>
     <nuxt />
   </div>
 </template>
-
+<script>
+  import top_section from '../components/top_section'
+  export default {
+    components: { top_section }
+  }
+</script>
 <style>
 html {
   font-family:

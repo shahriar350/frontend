@@ -18,13 +18,14 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Roboto+Condensed&family=Roboto:wght@300;400;500;700&display=swap' },
+      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@700&family=Oxygen:wght@300;400;700&display=swap' },
     ]
   },
   /*
   ** Global CSS
   */
   css: [
+    '@/assets/css/master.css'
   ],
   /*
   ** Plugins to load before mounting the App
@@ -32,6 +33,7 @@ export default {
   */
   plugins: [
     { src: '~/plugins/laravel-echo', ssr:false},
+
   ],
   /*
   ** Nuxt.js dev-modules
