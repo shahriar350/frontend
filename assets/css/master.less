@@ -1,24 +1,158 @@
-*{
+//transition
+.page-enter-active,
+.page-leave-active {
+  transition-property: opacity;
+  transition-timing-function: linear;
+  transition-duration: 100ms;
+}
+
+.page-enter,
+.page-leave-to {
+  opacity: 0;
+}
+
+//font design start
+.font-7 {
+  font-size: calc(7px + 0.35vw);
+}
+.font-8 {
+  font-size: calc(8px + 0.35vw);
+}
+.font-9 {
+  font-size: calc(9px + 0.35vw);
+}
+
+.font-10 {
+  font-size: calc(10px + 0.35vw);
+}
+
+.font-11 {
+  font-size: calc(11px + 0.35vw);
+}
+
+.font-12 {
+  font-size: calc(12px + 0.35vw);
+}
+
+.font-13 {
+  font-size: calc(13px + 0.35vw);
+}
+
+.font-14 {
+  font-size: calc(14px + 0.35vw);
+}
+
+.font-15 {
+  font-size: calc(15px + 0.35vw);
+}
+
+.font-16 {
+  font-size: calc(16px + 0.35vw);
+}
+
+.font-17 {
+  font-size: calc(17px + 0.35vw);
+}
+
+.font-18 {
+  font-size: calc(18px + 0.35vw);
+}
+
+.font-19 {
+  font-size: calc(19px + 0.35vw);
+}
+
+.font-20 {
+  font-size: calc(20px + 0.35vw);
+}
+
+.font-21 {
+  font-size: calc(21px + 0.35vw);
+}
+
+.font-21 {
+  font-size: calc(21px + 0.35vw);
+}
+
+.font-22 {
+  font-size: calc(22px + 0.35vw);
+}
+
+.font-23 {
+  font-size: calc(23px + 0.35vw);
+}
+
+.font-24 {
+  font-size: calc(24px + 0.35vw);
+}
+
+.font-25 {
+  font-size: calc(25px + 0.35vw);
+}
+
+.font-26 {
+  font-size: calc(26px + 0.35vw);
+}
+
+.font-27 {
+  font-size: calc(27px + 0.35vw);
+}
+
+.font-28 {
+  font-size: calc(28px + 0.35vw);
+}
+
+.font-29 {
+  font-size: calc(29px + 0.35vw);
+}
+
+.font-30 {
+  font-size: calc(30px + 0.35vw);
+}
+.font-weight-700{
+  font-weight: 700;
+}
+//font design end
+
+
+//transition end
+* {
   padding: 0;
   margin: 0;
 }
-.font1{
+
+.font1 {
   font-family: 'Oxygen', sans-serif;
 }
-.font2{
+
+.font2 {
   font-family: 'Nanum Gothic', sans-serif;
+  font-weight: 700;
 }
-body{
+
+body {
   .font1;
   padding: 0;
   margin: 0;
   overflow: hidden;
 }
 
-p{
+p {
   padding: 0;
   margin: 0;
 }
-a{
+
+a {
   text-decoration: none !important;
+}
+
+.nuxt-link-exact-active {
+  color: #323232;
+  font-weight: 700;
+}
+p{
+  color: #222222;
+}
+i{
+  color: #464646 ;
 }

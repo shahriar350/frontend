@@ -1,5 +1,5 @@
 <template>
-  <div class="px-3">
+  <div class="">
     <top_section></top_section>
     <nuxt />
   </div>

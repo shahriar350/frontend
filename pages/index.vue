@@ -1,6 +1,6 @@
 <template>
   <div>
-
+    {{ $t('hello') }}
   </div>
 </template>
 
@@ -9,12 +9,21 @@
 export default {
   components: {
   },
+  computed:{
+
+  },
   mounted(){
-    window.Echo.channel('laravel_database_demo')
-      .listen('DemoEvent', (e) => {
-        // this.message = e.message
-        console.log(e)
-      })
+    try{
+      window.Echo.channel('laravel_database_demo')
+        .listen('DemoEvent', (e) => {
+          // this.message = e.message
+          console.log(e)
+        })
+    } catch (e) {
+      console.log('something is error')
+    }
+
+
   },
 
 }
