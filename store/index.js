@@ -1,18 +1,11 @@
 export const state = () => ({
-  locales: [
-    {
-      code: 'bn',
-      name: 'BN'
-    },
-    {
-      code: 'en',
-      name: 'EN'
-    },
-  ],
-  locale: 'en'
+  server_errors: '',
 });
 
 export const getters = {
+  get_server_errors: (state) => {
+    return state.server_error
+  },
   isAuthenticated(state) {
     return state.auth.loggedIn
   },
@@ -21,9 +14,7 @@ export const getters = {
   }
 };
 export const mutations = {
-  SET_LANG(state, locale) {
-    if (state.locales.find(el => el.code === locale)) {
-      state.locale = locale
-    }
+  SET_SERVER_ERRORS(state,payload){
+    state.server_errors = payload
   }
 };

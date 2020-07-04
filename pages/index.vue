@@ -1,6 +1,6 @@
 <template>
   <div>
-    {{ $t('hello') }}
+    Main web site page
   </div>
 </template>
 

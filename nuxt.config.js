@@ -28,7 +28,7 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       {
         rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@700&family=Oxygen:wght@300;400;700&display=swap'
+        href: 'https://fonts.googleapis.com/css2?family=Dosis:wght@500;600&family=Oxygen:wght@300;400;700&display=swap'
       }
     ]
   },
@@ -37,7 +37,7 @@ export default {
   */
   css: [
     '@/assets/css/master.css',
-    '@/assets/boxicons/css/boxicons.min.css'
+    // '@/assets/boxicons/css/boxicons.min.css'
   ],
   /*
   ** Plugins to load before mounting the App
@@ -46,7 +46,7 @@ export default {
   plugins: [
     '@/plugins/mixins/user',
     { src: '~/plugins/laravel-echo', ssr: false },
-    // '~/plugins/i18n.js'
+    '~/plugins/ant',
   ],
 
   /*
@@ -63,27 +63,7 @@ export default {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/auth',
-    ['nuxt-i18n', {
-      locales: [
-        {
-          name: 'বাংলা',
-          code: 'bn',
-          iso: 'bn-BD',
-          file: 'bn.json'
-        },
-        {
-          name: 'English',
-          code: 'en',
-          iso: 'en-US',
-          file: 'en.json'
-        },
-      ],
-      langDir: 'lang/',
-      locale: 'en',
-      lazy: true,
-      fallbackLocale: 'en',
-      plugins: ['@/plugins/i18n.js'],
-    }]
+    'nuxt-sweetalert2',
   ],
   /*
   ** Axios module configuration
@@ -91,16 +71,20 @@ export default {
   */
   axios: {
     proxy: true,
-    withCredentials: true
+    withCredentials: true,
+    plugins: [
+      '~/plugins/axios401.js'
+    ]
   },
   proxy: {
-    '/api/': { target: 'http://localhost:8000/api', pathRewrite: { '^/api': '' } }
+    '/api/': { target: 'http://127.0.0.1:8000/api', pathRewrite: { '^/api': '' } }
   },
   auth: {
     redirect: {
       login: '/auth/login',
       logout: '/',
-      home: '/'
+      home: '/',
+      fallback: '/auth/login'
     },
     strategies: {
       local: {
@@ -128,10 +112,6 @@ export default {
   */
 
   build: {
-    // vendor: ['vue-i18n']
-  },
-  router: {
-    middleware: ['i18n']
   },
 
 }

@@ -7,15 +7,24 @@ input{
   @apply px-3;
   @apply py-2;
   @apply w-full;
-  @apply shadow rounded antialiased ;
+  @apply shadow-sm rounded antialiased ;
 
 }
-.btn{
-  @apply px-4 py-2 rounded border-0;
+
+@responsive{
+  .btn{
+    @apply px-4 py-2 rounded border-0;
+  }
+  .btn-sm{
+    @apply px-2 py-1 rounded border-0;
+  }
 }
 .btn-primary{
-  @apply bg-blue-400 shadow;
+  @apply bg-blue-400 text-white shadow;
 }
-.btn-primary-bold{
-  @apply bg-blue-600 shadow;
+.btn-primary:hover{
+  @apply bg-blue-500 text-white transition duration-200 ease-in-out;
+}
+.card{
+  @apply w-full shadow border-0 bg-white p-2;
 }
