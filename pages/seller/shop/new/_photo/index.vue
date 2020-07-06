@@ -26,7 +26,6 @@
               </div>
             </div>
           </div>
-
           <input type="file" :key="index" multiple ref="location" @change="changeLocationBanner(location.id,index)">
         </div>
         <div class="my-4">

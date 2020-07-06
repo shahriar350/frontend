@@ -27,22 +27,13 @@
         locations</p>
       <div class="mt-5 grid sm:grid-cols-2 grid-cols-1  md:gap-4 gap-2">
         <div v-for="(loc,index) in shop.locations" class="relative mb-4 bg-blue-100 p-2 rounded shadow">
-          <!--          <a-carousel arrows>-->
-          <!--            <div v-for="(img,index) in loc.banners">-->
-          <!--              <img :src="img.banner" alt="" class="shadow-md rounded">-->
-          <!--            </div>-->
-          <!--          </a-carousel>-->
-          <div class="relative">
-            <client-only placeholder="Loading...">
-              <agile ref="carousel">
-                <div class="slide" v-for="(banner,index) in loc.banners">
-                  <img :src="banner.banner" alt="" width="100%">
-                </div>
-                <template slot="prevButton"><a-icon :style="{ fontSize: '16px', color: '#08c' }" type="left"/></template>
-                <template slot="nextButton"><a-icon :style="{ fontSize: '16px', color: '#08c' }" type="right"/></template>
-              </agile>
-            </client-only>
-          </div>
+
+            <hooper class="rounded" :progress="true" :autoPlay="true" :playSpeed="2000">
+              <slide v-for="(banner,index) in loc.banners" :key="index">
+                <img :src="banner.banner" alt="" width="100%">
+              </slide>
+              <hooper-navigation slot="hooper-addons"></hooper-navigation>
+            </hooper>
 
           <p v-if="loc.shopping_complex" class="block w-full flex flex-col">
             <span class="mx-1 md:text-base text-sm">{{ loc.shop_no}},</span>
@@ -64,18 +55,18 @@
 </template>
 
 <script>
-  import { VueAgile } from 'vue-agile'
-  import 'vue-agile/dist/VueAgile.css'
-
+  // import { VueAgile } from 'vue-agile'
+  // import 'vue-agile/dist/VueAgile.css'
+  import { Hooper, Slide, Navigation as HooperNavigation } from 'hooper';
+  import 'hooper/dist/hooper.css';
   export default {
     components: {
-      agile: VueAgile
+      Hooper,Slide,HooperNavigation
+      // agile: VueAgile
     },
     head() {
       return {
-        link: [
-          'https://unpkg.com/vue-agile/dist/VueAgile.css'
-        ]
+        title: `${this.shop.name} view`
       }
     },
     data() {
@@ -112,12 +103,5 @@
 </script>
 
 <style>
-  .agile--ssr .agile__slides > * {
-    overflow: hidden;
-    width: 0
-  }
 
-  .agile--ssr .agile__slides > *:first-child {
-    width: 100%
-  }
 </style>

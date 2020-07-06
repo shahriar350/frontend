@@ -1,6 +1,6 @@
 <template>
   <div class="">
-      Seller Dashbard
+      Seller Dashboard
   </div>
 </template>
 

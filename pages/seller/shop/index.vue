@@ -8,22 +8,23 @@
         <nuxt-link to="/seller/shop/new" class="md:btn btn-sm btn-primary md:text-base text-sm font-weight-700">New Shop</nuxt-link>
       </div>
     </div>
-      <button class="w-full mb-3 md:btn btn-sm btn-primary md:text-base text-sm">Deleted shop</button>
+
     <div class="grid xl:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
-      <div class="card" v-for="(shop,index) in shops">
-        <div class="border-b bg-gray-100">
-          <img class="shadow-md rounded p-2" v-if="shop.single_banner" :src="shop.single_banner.banner" alt="">
+        <div class="card" v-for="(shop,index) in shops">
+          <div class="border-b bg-gray-100">
+            <img class="shadow-md rounded p-2" v-if="shop.single_banner" :src="shop.single_banner.banner" alt="">
+          </div>
+          <div class="mt-2">
+            <p class="text-center font-12 font-bold">{{ shop.name }}</p>
+            <p class="text-center font-12">{{ shop.description }}</p>
+          </div>
+          <div class="mt-3 bg-gray-100 rounded border-0 grid grid-cols-3 gap-5 border border-blue-200">
+            <nuxt-link title="Show details" :to="`/seller/shop/${shop.id}`" class="transition duration-300 hover:bg-white py-2 md:text-xl text-sm cursor-pointer hover:text-2xl flex justify-center"><a-icon type="fullscreen" /></nuxt-link>
+            <a-icon type="edit" class="transition duration-300 hover:bg-white py-2 md:text-xl text-sm cursor-pointer hover:text-2xl"/>
+            <a-icon @click="deleteShop(shop.id,index)" type="delete" class="transition duration-300 hover:bg-white py-2 text-red-600 md:text-xl text-sm cursor-pointer hover:text-2xl"/>
+          </div>
         </div>
-        <div class="mt-2">
-          <p class="text-center font-12 font-bold">{{ shop.name }}</p>
-          <p class="text-center font-12">{{ shop.description }}</p>
-        </div>
-        <div class="mt-3 bg-gray-100 rounded border-0 grid grid-cols-3 gap-5 border border-blue-200">
-          <nuxt-link title="Show details" :to="`/seller/shop/${shop.id}`" class="transition duration-300 hover:bg-white py-2 md:text-xl text-sm cursor-pointer hover:text-2xl flex justify-center"><a-icon type="fullscreen" /></nuxt-link>
-          <a-icon type="edit" class="transition duration-300 hover:bg-white py-2 md:text-xl text-sm cursor-pointer hover:text-2xl"/>
-          <a-icon @click="deleteShop(shop.id,index)" type="delete" class="transition duration-300 hover:bg-white py-2 text-red-600 md:text-xl text-sm cursor-pointer hover:text-2xl"/>
-        </div>
-      </div>
+
     </div>
   </div>
 </template>

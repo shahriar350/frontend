@@ -2,7 +2,7 @@
 <template>
   <div class="shadow pb-2">
     <div class="xl:px-16 md:px-8 px-3 flex justify-between top_section_top">
-      <div class="flex first_top_item">
+      <div class="flex first_top_item md:flex hidden">
         <p class="border-r set_center border-gray-400 font-9"><i class="bx bx-car mr-1"></i>Free delivery</p>
         <p class="border-r set_center border-gray-400 font-9"><i class="bx bx-globe-alt mr-1"></i>Return policy </p>
         <nuxt-link  to="/bongo/seller/request" class="set_center border-r border-gray-400 font-9">

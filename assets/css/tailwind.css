@@ -2,15 +2,18 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 input{
-  @apply border;
+  @apply border-0;
   @apply border-gray-300;
   @apply px-3;
   @apply py-2;
   @apply w-full;
+  @apply bg-teal-200;
   @apply shadow-sm rounded antialiased ;
 
 }
-
+input:focus {
+  @apply border-gray-500 bg-purple-200;
+}
 @responsive{
   .btn{
     @apply px-4 py-2 rounded border-0;
@@ -21,6 +24,12 @@ input{
 }
 .btn-primary{
   @apply bg-blue-400 text-white shadow;
+}
+.btn-danger{
+  @apply bg-red-400 text-white shadow;
+}
+.btn-danger:hover{
+  @apply bg-red-500 text-white transition duration-200 ease-in-out;
 }
 .btn-primary:hover{
   @apply bg-blue-500 text-white transition duration-200 ease-in-out;

@@ -1,11 +1,10 @@
 <template>
   <div class="flex md:gap-4 gap-1 mt-5 ">
-    <div>
+    <div class="">
       <a-menu
         :default-selected-keys="[$route.path]"
         mode="inline"
-        :inline-collapsed="screenWidth <= 768"
-      >
+        :inline-collapsed="screenWidth <= 768">
 
         <a-menu-item key="/seller">
           <nuxt-link to="/seller">
@@ -20,6 +19,14 @@
             <span>Shop</span>
           </nuxt-link>
         </a-menu-item>
+
+        <a-menu-item key="/seller/product">
+          <nuxt-link to="/seller/product">
+            <a-icon type="snippets" />
+            <span>Product</span>
+          </nuxt-link>
+        </a-menu-item>
+
 <!--        <a-sub-menu key="sub1">-->
 <!--          <span slot="title"><a-icon type="mail" /><span>Navigation One</span></span>-->
 <!--          <a-menu-item key="5">-->
