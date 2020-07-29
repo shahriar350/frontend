@@ -7,7 +7,6 @@
     <form @submit.prevent="requestSeller" class="mt-3">
       <div  class="grid grid-cols-1 gap-4 justify-center">
         <div class="grid grid-rows-4 gap-4 p-2 shadow rounded">
-
           <div>
             <input type="text" class="placeholder-gray-600" v-model.trim="$v.form.english.shop_name.$model" placeholder="Enter your shop name">
             <p class="text-red-500 md:text-sm text-xs" v-if="$v.form.english.shop_name.$error">Please enter your shop name</p>

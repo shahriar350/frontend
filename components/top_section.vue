@@ -27,7 +27,11 @@
               </a-sub-menu>
             </a-menu>
           </div>
-          <nuxt-link v-else to="/auth/login" class="font-9">Login</nuxt-link>
+
+            <nuxt-link v-else  to="/auth/login" class="font-9">
+              <p class="py-2">Login</p>
+            </nuxt-link>
+
         </div>
         <div v-if="auth && user.seller" class="set_center bg-white px-2">
           <n-link to="/seller">Seller</n-link>

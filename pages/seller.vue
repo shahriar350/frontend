@@ -1,11 +1,9 @@
 <template>
-  <div class="flex md:gap-4 gap-1 mt-5 ">
+  <div class="flex flex-col md:gap-4 gap-1 mt-5 ">
     <div class="">
       <a-menu
         :default-selected-keys="[$route.path]"
-        mode="inline"
-        :inline-collapsed="screenWidth <= 768">
-
+        :mode="screenWidth <= 768 ? 'inline' : 'horizontal'">
         <a-menu-item key="/seller">
           <nuxt-link to="/seller">
             <a-icon type="home" />
@@ -45,7 +43,7 @@
 
       </a-menu>
     </div>
-    <div class="xl:pr-16 md:pr-8 pr-3 w-full">
+    <div class=" w-full">
       <nuxt-child></nuxt-child>
     </div>
   </div>

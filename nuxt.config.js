@@ -54,8 +54,12 @@ export default {
   */
   buildModules: [
     // Doc: https://github.com/nuxt-community/nuxt-tailwindcss
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/tailwindcss',
+    '@nuxtjs/moment'
   ],
+  moment: {
+    defaultTimezone: 'Asia/Dhaka',
+  },
   /*
   ** Nuxt.js modules
   */
@@ -80,6 +84,7 @@ export default {
     '/api/': { target: 'http://127.0.0.1:8000/api', pathRewrite: { '^/api': '' } }
   },
   auth: {
+
     redirect: {
       login: '/auth/login',
       logout: '/',

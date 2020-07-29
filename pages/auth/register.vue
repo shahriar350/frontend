@@ -26,8 +26,10 @@
     },
     methods: {
       async registerNow() {
+
         await this.$axios.post('/api/register',this.form)
           .then(res => {
+            this.$store.commit('SET_SERVER_ERRORS','')
             this.$notification.info({
               message: 'A verification code has sent to your email. Please check it out and active your email',
               duration: 5
