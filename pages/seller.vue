@@ -49,6 +49,14 @@
   </div>
 </template>
 
+<script>
+  export default {
+    middleware: [
+      'auth','is_seller'
+    ],
+  }
+</script>
+
 <style>
 
 </style>

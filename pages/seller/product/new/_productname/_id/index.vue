@@ -1,7 +1,7 @@
 <template>
   <div class="">
 
-    <p class="font-bold md:text-2xl text-base">{{ $route.params.productname}}</p>
+    <p class="font-bold md:text-2xl text-base">{{ $route.params.productname | firstCapital}}</p>
     <div class="flex justify-end">
       <ul class="">
         <li class="font2 md:text-base text-sm">Image size should be square or 1024X1024</li>
@@ -23,7 +23,7 @@
       <label for="image">Upload Image(s)</label>
       <input accept="image/*" type="file" id="image" multiple @change="uploadImage">
     </div>
-    <nuxt-link :to="{path: `/seller/product/new/${this.$route.params.id}/options`}" class="btn btn-primary w-full mt-5 flex items-center justify-center">Add options <a-icon type="arrow-right" class="mx-2" /> </nuxt-link>
+    <nuxt-link :to="{path: `/seller/product/new/${$route.params.productname}/${this.$route.params.id}/option`}" class="btn btn-primary w-full mt-5 flex items-center justify-center">Add options <a-icon type="arrow-right" class="mx-2" /> </nuxt-link>
   </div>
 </template>
 
@@ -75,6 +75,11 @@
                 })
             }
           })
+      }
+    },
+    filters: {
+      firstCapital: function(value) {
+        return value.charAt(0).toUpperCase()+value.slice(1)
       }
     }
   }

@@ -1,5 +1,6 @@
 
 export default {
+  target: 'static',
   server: {
     port: 3000, // default: 3000
     host: 'localhost' // default: localhost
@@ -28,7 +29,7 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       {
         rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=Dosis:wght@500;600&family=Oxygen:wght@300;400;700&display=swap'
+        href: 'https://fonts.googleapis.com/css2?family=Dosis:wght@500;600&family=Rubik:wght@400;500;700&display=swap'
       }
     ]
   },
@@ -46,6 +47,7 @@ export default {
   plugins: [
     '@/plugins/mixins/user',
     { src: '~/plugins/laravel-echo', ssr: false },
+    { src: '~/plugins/editor', ssr: false },
     '~/plugins/ant',
   ],
 
@@ -68,6 +70,8 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/auth',
     'nuxt-sweetalert2',
+    ['@nuxtjs/component-cache', { maxAge: 1000 * 60 * 60 }],
+
   ],
   /*
   ** Axios module configuration

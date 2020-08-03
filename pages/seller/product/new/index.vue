@@ -19,7 +19,7 @@
         <div class="md:w-10/12">
           <small class="tracking-wider text-red-500 bg-red-100 w-screen" v-if="!$v.select_shops.required">You must
             select minimum one
-            shop</small>
+            shop. </small>
           <div class="md:w-10/12">
             <div v-for="(shop,index) in shops" class="">
               <p>
@@ -62,9 +62,10 @@
           <div class="md:w-10/12">
             <input required type="text" id="name" v-model.trim="$v.product.name.$model">
             <small class="text-red-500 tracking-wider" v-if="!$v.product.name.required">Please
-              enter product name</small>
-            <small class="text-red-500 tracking-wider" v-if="!$v.product.name.nameValid">
-              A-Z and 0-9 letter are valid
+              enter product name. </small>
+            <small class="text-red-500 tracking-wider"
+                   v-if="$v.product.name.$model !== '' && !$v.product.name.nameValid">
+              A-Z and 0-9 letter are valid.
             </small>
           </div>
         </div>
@@ -75,10 +76,12 @@
             <div v-if="">
               <small class="text-red-500 tracking-wider" v-if="!$v.product.price.required">Please enter product
                 original price. </small>
-              <small class="text-red-500 tracking-wider" v-if="!$v.product.price.price">Product price should be 1000 or
+              <small class="text-red-500 tracking-wider"
+                     v-if="$v.product.price.$model !== '' && !$v.product.price.price">Product price should be 1000 or
                 1000.20. </small>
-              <small class="text-red-500 tracking-wider" v-if="!$v.product.price.positiveInteger">
-                Price should be more then 1
+              <small class="text-red-500 tracking-wider"
+                     v-if="($v.product.price.$model !== '' || $v.product.price.$model ) && !$v.product.price.positiveInteger">
+                Price should be more then 1.
               </small>
             </div>
           </div>
@@ -91,13 +94,17 @@
               <div class="ml-5">
                 <div class="my-5" v-for="(loc,locindex) in shop.locations" :key="locindex">
                   <div>
+
+                    <a-checkbox :checked="$v.select_shops.$each[index].locations.$each[locindex].stock.$model"
+                                @change="stockCheck(index,locindex)">In Stock
+                    </a-checkbox>
                     <input id="`quantity${index}`" type="number" v-model.number="loc.quantity">
                     <small class="tracking-wider text-red-600"
                            v-if="!$v.select_shops.$each[index].locations.$each[locindex].quantity.required">Product
                       quantity at this location and quantity should be in number</small>
                     <small class="tracking-wider text-red-600"
-                           v-if="!$v.select_shops.$each[index].locations.$each[locindex].quantity.positiveInteger">
-                      quantity should be more then 1
+                           v-if="!$v.select_shops.$each[index].locations.$each[locindex].quantity.onlyinteger">
+                      Quantity cannot be negative(-12) or float(1.23).
                     </small>
                   </div>
                   <div class="">
@@ -125,51 +132,57 @@
             <input class="placeholder-black" @keydown.enter="addTag" type="text" @keydown.188='addTag' id="tag"
                    v-model="tag" placeholder="Product tag">
             <small class="text-red-500 tracking-wider"
-                   v-if="!$v.tag.tagValid ">a-z A-Z 0-9 are valid letter or number. </small>
+                   v-if="$v.tag.$model !== '' && !$v.tag.tagValid ">a-z A-Z 0-9 are valid letter or number. </small>
             <small class="text-red-500 tracking-wider"
-                   v-if="(!$v.product.tags.required || !$v.product.tags.minLength)">Minimum 5 product tags are required. </small>
+                   v-if="(!$v.product.tags.required || !$v.product.tags.minLength)">Minimum 5 product tags are
+              required. </small>
             <small class="text-red-500 tracking-wider"
                    v-if="!$v.product.tags.maxLength ">Minimum 15 product tags can be added. </small>
           </div>
         </div>
       </form>
-      <wysiwyg v-model="product.description"/>
+      <vue-editor v-model="product.description"></vue-editor>
+
+<!--      <wysiwyg v-model="product.description"/>-->
       <div class="mt-5 bg-gray-100 p-2 shadow rounded">
-        <p class=" py-2 border-b "> <span class="font-bold font-base">Add offer now </span> <small>(optional)</small> </p>
+        <p class=" py-2 border-b "><span class="font-bold font-base">Add offer now </span> <small>(optional)</small></p>
+        <div class="my-5">
+          <a-checkbox @change="offerActive" :checked="product.offer.active === 1">Active offer</a-checkbox>
+        </div>
         <div class="my-5">
           <label for="offer_price">Price</label>
           <input id="offer_price" type="number" v-model.trim.number="$v.product.offer.price.$model">
-          <div v-if="!$v.product.offer.checkOffer">
-            <small class="text-red-500 tracking-wider"
-                   v-if="!$v.product.offer.price.price">Offer
-              price should be like 1000 or 1000.50</small>
-            <small class="text-red-500 tracking-wider"
-                   v-if=" !$v.product.offer.price.positiveInteger">Offer
-              price should be positive over 1</small>
-          </div>
-
+          <small class="text-red-500 tracking-wider"
+                 v-if="!$v.product.offer.price.price">Offer
+            price should be like 1000 or 1000.50. </small>
+          <small class="text-red-500 tracking-wider"
+                 v-if="!$v.product.offer.price.required">Please Enter your price of offer </small>
+          <small class="text-red-500 tracking-wider"
+                 v-if=" !$v.product.offer.price.positiveInteger">Offer
+            price should be positive over 0. </small>
 
         </div>
         <div class="my-5">
-          <label for="offer_price">Offer type</label>
-          <select v-model="$v.product.offer.typeOffer.$model" id="offer_price"
+          <label for="offer_type">Offer type</label>
+          <select v-model="$v.product.offer.typeOffer.$model" id="offer_type"
                   class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
             <option value="" selected>Select One (none)</option>
             <option value="fixed">Fixed Price</option>
             <option value="percent">Percentage %</option>
           </select>
           <small class="text-red-500 tracking-wider"
-                 v-if="!$v.product.offer.checkOffer && product.offer.typeOffer === ''">Add product offer type</small>
+                 v-if="!$v.product.offer.typeOffer.required">Add product offer type</small>
         </div>
         <div class="my-5">
           <label for="minimum_buy">Minimum product to buy</label>
           <select v-model="$v.product.offer.minimum.$model" id="minimum_buy"
                   class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
             <option value="" selected>Select One (none)</option>
-            <option :value="number" v-for="number in 5">{{number}}</option>
+            <option :value="number" v-for="number in 5">{{number}} </option>
           </select>
           <small class="text-red-500 tracking-wider"
-                 v-if="!$v.product.offer.checkOffer && product.offer.minimum === ''">Minimum product buy to </small>
+                 v-if="!$v.product.offer.minimum.required ">Minimum buy this product to apply offer. </small>
+
         </div>
         <div class="my-5 flex flex-col my-3">
           <label class="" for="offer_date">Offer date time</label>
@@ -186,17 +199,19 @@
             >
               <template v-slot:input="picker" style="min-width: 350px;">
                 <p>Add your days</p>
-                {{ product.offer.offerTime.startDate  }} - {{ product.offer.offerTime.endDate }}
+                {{ product.offer.offerTime.startDate }} - {{ product.offer.offerTime.endDate }}
               </template>
             </date-range-picker>
-            <p  @click="resetOfferPrice" class="focus:bg-blue-200 cursor-pointer p-2 flex items-center">Reset</p>
+            <p @click="resetOfferPrice" class="focus:bg-blue-200 cursor-pointer p-2 flex items-center">Reset</p>
           </div>
-          <small class="text-red-500 tracking-wider"
-                 v-if="!$v.product.offer.checkOffer && product.offer.offerTime.endDate === null && product.offer.offerTime.startDate === null">Add your product offer start and end date </small>
-
 <!--          <small class="text-red-500 tracking-wider"-->
-<!--                 v-if="!$v.product.offer.checkOffer && product.offer.minimum === ''">Minimum product buy to </small>-->
+<!--                 v-if="!$v.product.offer.offerTime.endDate.required && !$v.product.offer.offerTime.startDate.required">Add-->
+<!--            your product offer start and end date </small>-->
+
+          <!--          <small class="text-red-500 tracking-wider"-->
+          <!--                 v-if="!$v.product.offer.checkOffer && product.offer.minimum === ''">Minimum product buy to </small>-->
         </div>
+
       </div>
       <div class="mt-5 w-full bg-gray-100 shadow mb-5 flex justify-center py-2">
         <button @click.prevent="uploadBasicInfo" class="flex items-center md:text-base text-sm">Add image now
@@ -214,19 +229,23 @@
   Vue.use(Collapse)
   import Vuelidate from 'vuelidate'
   import { validationMixin } from 'vuelidate'
-  import { between,alpha,alphaNum,required, decimal, numeric, minLength, maxLength } from 'vuelidate/lib/validators'
+  import {  required, minLength, maxLength, requiredIf } from 'vuelidate/lib/validators'
+
+  const onlyinteger = (value) => value === '' || /^[1-9][\d]*$/.test(value)
   const positiveInteger = (value) => value > 0 || value === ''
   // import child_category from '../../../../components/child_category'
   import Treeselect from '@riophae/vue-treeselect'
   import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-  import wysiwyg from 'vue-wysiwyg'
+
   import server_error from '../../../../components/server_error'
 
+  import wysiwyg from 'vue-wysiwyg'
   Vue.use(wysiwyg, {})
   import 'vue-wysiwyg/dist/vueWysiwyg.css'
+
   import DateRangePicker from 'vue2-daterange-picker'
-  //you need to import the CSS manually (in case you want to override it)
   import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
+
   export default {
     head() {
       return {
@@ -234,8 +253,9 @@
       }
     },
     mixins: [validationMixin],
-    components: {DateRangePicker , Vuelidate, Treeselect, server_error },
+    components: { DateRangePicker, Vuelidate, Treeselect, server_error },
     data() {
+
       const now = new Date()
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
       const minDate = new Date(today).toJSON()
@@ -252,12 +272,13 @@
           tags: [],
           description: null,
           offer: {
+            active: 0,
             price: '',
             minimum: '',
             typeOffer: '',
             offerTime: {
               endDate: null,
-              startDate: null,
+              startDate: null
             }
           }
         }
@@ -265,8 +286,8 @@
     },
     validations: {
       tag: {
-        tagValid(value){
-          return /^[a-zA-Z0-9 ]*$/.test(value)
+        tagValid(value) {
+          return /^([a-zA-Z0-9 ]+)(\s[a-zA-Z0-9 ]+)*$/.test(value) || value === ''
         }
       },
       select_categories: {
@@ -277,10 +298,12 @@
         $each: {
           locations: {
             $each: {
+              stock: {
+                required
+              },
               quantity: {
                 required,
-                numeric,
-                positiveInteger
+                onlyinteger
               }
             }
           }
@@ -288,27 +311,35 @@
       },
       product: {
         offer: {
-          checkOffer: function(value) {
-            return ((value.price === '' && value.minimum === '' && value.typeOffer === '' && value.offerTime.endDate === null && value.offerTime.startDate === null) ||
-              (value.price !== '' && value.minimum !== '' && value.typeOffer !== '' && value.offerTime.endDate !== null && value.offerTime.startDate !== null))
+          minimum: {
+            required: requiredIf(function(val) {
+              return val.active === 1
+            }),
           },
+          typeOffer: {
+            required: requiredIf(function(val) {
+              return val.active === 1
+            }),
+          },
+          active: {},
+          // checkOffer: function(value) {
+          //   return ((value.price === '' && value.minimum === '' && value.typeOffer === '' && value.offerTime.endDate === null && value.offerTime.startDate === null) ||
+          //     (value.price !== '' && value.minimum !== '' && value.typeOffer !== '' && value.offerTime.endDate !== null && value.offerTime.startDate !== null))
+          // },
           price: {
+            required: requiredIf(function(val) {
+              return val.active === 1
+            }),
             positiveInteger,
             price(value) {
               return /^\d+(\.\d{1,2})?$/.test(value) || value === ''
             }
-          },
-          minimum: {
-            numeric
-          },
-          typeOffer: {
-            alpha
           }
         },
         name: {
           required,
-          nameValid(value){
-            return /^[a-zA-Z0-9_ ]*$/.test(value)
+          nameValid(value) {
+            return /^([a-zA-Z0-9]+)(\s[a-zA-Z0-9]+)*$/.test(value)
           }
         },
         price: {
@@ -335,9 +366,16 @@
         })
     },
     methods: {
-      resetOfferPrice(){
-          this.product.offer.offerTime.startDate = null;
-          this.product.offer.offerTime.endDate = null;
+      stockCheck(index, locindex) {
+        if (this.select_shops[index].locations[locindex].stock) {
+          this.select_shops[index].locations[locindex].stock = 0
+        } else {
+          this.select_shops[index].locations[locindex].stock = 1
+        }
+      },
+      resetOfferPrice() {
+        this.product.offer.offerTime.startDate = null
+        this.product.offer.offerTime.endDate = null
       },
       updateValuesOffer() {
         this.product.offer.offerTime.startDate = this.$moment(this.$refs.offertime._data.start).format('YYYY-MM-DD HH:mm:ss')
@@ -353,7 +391,7 @@
             shops: this.select_shops
           }).then(res => {
             console.log(res)
-            if (res.status === 200){
+            if (res.status === 200) {
               this.$router.push(`/seller/product/new/${this.product.name}/${res.data.data}`)
             }
           }).catch(err => {
@@ -409,7 +447,8 @@
               floor: e.floor,
               shop_no: e.shop_no,
               banners: e.banners,
-              quantity: 0
+              quantity: 0,
+              stock: 0
             })
           })
           this.select_shops.push({
@@ -419,6 +458,7 @@
           })
         }
       },
+
       toggleShopLoc(shopId, location) {
         let available = false
         let indexParent = 0
@@ -457,13 +497,26 @@
               floor: e.floor,
               shop_no: e.shop_no,
               banners: e.banners,
-              quantity: 0
+              quantity: 0,
+              stock: 0
             })
           }
         } else {
           this.$message.warning('Please add shop first')
         }
 
+      },
+      offerActive() {
+        if (this.product.offer.active) {
+          this.product.offer.active = 0
+          this.product.offer.minimum = ''
+          this.product.offer.typeOffer = ''
+          this.product.offer.price = ''
+          this.product.offer.offerTime.endDate = null
+          this.product.offer.offerTime.startDate = null
+        } else {
+          this.product.offer.active = 1
+        }
       },
       select_cat_now(id, parent) {
         let index = 0
@@ -515,35 +568,43 @@
   .editr--content ul li {
     list-style: circle inside !important;
   }
-  .daterangepicker{
+
+  .daterangepicker {
     top: 100% !important;
   }
-  .vue-daterange-picker{
+
+  .vue-daterange-picker {
     display: flex !important;
     width: 100% !important;
   }
-  .editr--toolbar{
+
+  .editr--toolbar {
     height: auto !important;
     flex-wrap: wrap !important;
   }
-  .editr--toolbar a.vw-btn-separator i.vw-separator{
+
+  .editr--toolbar a.vw-btn-separator i.vw-separator {
     border-left: none !important;
   }
+
   @media screen and (max-width: 940px) {
 
   }
+
   @media screen and (max-width: 768px) {
-    .daterangepicker{
+    .daterangepicker {
       left: 50% !important;
     }
   }
+
   @media screen and (max-width: 596px) {
-    .daterangepicker{
+    .daterangepicker {
       left: 55% !important;
     }
   }
+
   @media screen and (max-width: 540px) {
-    .calendars-container{
+    .calendars-container {
       display: flex !important;
       flex-direction: column !important;
     }
