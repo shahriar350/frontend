@@ -65,7 +65,7 @@
       </div>
       <div class="my-5">
         <vue-editor v-model="product.description"></vue-editor>
-<!--        <wysiwyg v-model="product.description"/>-->
+        <!--        <wysiwyg v-model="product.description"/>-->
       </div>
       <p class="py-2 border-b text-base"><span class="mx-2">Offer</span></p>
       <div class="my-3">
@@ -271,7 +271,7 @@
         </div>
       </div>
     </div>
-<!--    product option -->
+    <!--    product option -->
     <div class="my-5 card">
       <p class="text-2xl pb-2 border-b">Product Options</p>
       <div v-for="(option,index) in product.options" class="mt-2 card rounded border border-blue-200 pb-2">
@@ -282,8 +282,10 @@
               <p class="text-base py-2">{{opt.name}}</p>
               <div>
                 <label :for="`optionPrice${index}${optIndex}`">Price: </label>
-                <input type="number" :id="`optionPrice${index}${optIndex}`" v-model.trim.number="$v.product.options.$each[index].options.$each[optIndex].price.$model">
-                <small class="text-red-500 tracking-wider" v-if=" !$v.product.options.$each[index].options.$each[optIndex].price.price">
+                <input type="number" :id="`optionPrice${index}${optIndex}`"
+                       v-model.trim.number="$v.product.options.$each[index].options.$each[optIndex].price.$model">
+                <small class="text-red-500 tracking-wider"
+                       v-if=" !$v.product.options.$each[index].options.$each[optIndex].price.price">
                   Price should be 1000 or 1000.20. </small>
                 <small class="text-red-500 tracking-wider"
                        v-if="!$v.product.options.$each[index].options.$each[optIndex].price.positiveInteger">
@@ -291,26 +293,187 @@
                 </small>
               </div>
             </div>
-            <div class="flex justify-center flex-col">
-              <img :src="opt.image.image" alt="option image" width="120px" class="shadow rounded">
-              <label class="flex justify-center text-xs font-bold px-2 py-1 bg-gray-100 shadow rounded " :for="`changeImg${index}${optIndex}`">Change</label>
-              <input @change="optionImageUpdate(option.id,opt.id,index,optIndex)" class="hidden" type="file" :id="`changeImg${index}${optIndex}`">
+            <div  class="flex justify-center flex-col">
+              <img v-if="opt.image && opt.image.image" :src="opt.image.image" alt="option image" width="120px" class="shadow rounded">
+              <label v-if="opt.image && opt.image.image" class="flex justify-center text-xs font-bold px-2 py-1 bg-gray-100 shadow rounded "
+                     :for="`changeImg${index}${optIndex}`">Change</label>
+              <label v-else class="flex justify-center text-xs font-bold px-2 py-1 bg-gray-100 shadow rounded "
+                     :for="`changeImg${index}${optIndex}`">Upload image</label>
+              <input @change="optionImageUpdate(option.id,opt.id,index,optIndex)" class="hidden" type="file"
+                     :id="`changeImg${index}${optIndex}`">
             </div>
           </div>
         </div>
-        <button class="btn btn-primary w-full" @click="updateOptionInfo(option.id,index)">Update {{ option.name }}</button>
+        <button class="btn btn-primary w-full" @click="updateOptionInfo(option.id,index)">Update {{ option.name }}
+        </button>
       </div>
       <button class="md:btn btn-sm btn-primary w-full mt-3" @click="modal.options = 1">Add more options</button>
     </div>
     <a-modal @cancel="cancelOptionModal" title="Add more options" :visible="modal.options === 1">
       <template slot="footer">
         <button key="back" class="md:btn btn-sm btn-danger" @click="cancelOptionModal">Cancel</button>
-        <button key="submit" class="md:btn btn-sm btn-primary">Add now</button>
       </template>
       <div>
-        <div class="my-3">
+        <a-checkbox v-if="!product.options.some(e => e.name.toLowerCase() === 'bundle')" :checked="select_option.some(e => e === 'bundle')" @change="changeBundle">Bundle</a-checkbox>
+        <a-checkbox v-if="!product.options.some(e => e.name.toLowerCase() === 'color')" :checked="select_option.some(e => e === 'color')" @change="changeColor">Color</a-checkbox>
+        <a-checkbox v-if="!product.options.some(e => e.name.toLowerCase() === 'size')" :checked="select_option.some(e => e === 'size')" @change="changeSize">Size</a-checkbox>
+        <a-checkbox v-if="product.options.some(e => e.name.toLowerCase() !== 'bundle' || e.name.toLowerCase() !== 'color' ||
+        e.name.toLowerCase() === 'bundle')" :checked="select_option.some(e => e !== 'bundle' || e !== 'size' || e !== 'color')" @change="changeCustom">Custom</a-checkbox>
+        <form v-if="select_option.some(e => e === 'bundle')" @submit.prevent="uploadBundle">
+          <p class="text-base py-2 border-b border-blue-200">Bundle items</p>
+          <div class="flex" v-for="(bundle,index) in options.bundles" :key="index">
+            <div class="w-full pr-2">
+              <div class="my-2">
+                <label :for="`bundlename${index}`">bundle items</label>
+                <input type="text" :id="`bundlename${index}`" v-model.trim="bundle.name">
+                <small class="text-red-500 tracking-wider"
+                       v-if=" !$v.options.bundles.$each[index].name.required">
+                  Bundle items are required </small>
+                <small class="text-red-500 tracking-wider"
+                       v-if="!$v.options.bundles.$each[index].name.validString">
+                  String support only a-z/A-Z/0-9 , _ only
+                </small>
+              </div>
+              <div class="my-2">
+                <label :for="`bundleprice${index}`">bundle price</label>
+                <input type="number" :id="`bundleprice${index}`" v-model.trim.number="bundle.price">
+                <small class="text-red-500 tracking-wider"
+                       v-if=" !$v.options.bundles.$each[index].price.required">
+                  Price is required </small>
+                <small class="text-red-500 tracking-wider"
+                       v-if=" !$v.options.bundles.$each[index].price.price">
+                  Price should be 1000 or 1000.20. </small>
+                <small class="text-red-500 tracking-wider"
+                       v-if="!$v.options.bundles.$each[index].price.positiveInteger">
+                  Price should be more then 1.
+                </small>
+              </div>
+            </div>
+            <div class="self-center p-2 ">
+              <p v-if="index === options.bundles.length -1" @click="increaseBundle" class="p-2 my-1 cursor-pointer rounded shadow bg-gray-100"><a-icon type="plus" /></p>
+              <p v-if="options.bundles.length > 1" @click="decreaseBundle(index)" class="p-2 my-1 cursor-pointer rounded shadow bg-gray-100"><a-icon type="delete" /></p>
+            </div>
+          </div>
+          <button type="submit" class="md:btn btn-sm btn-primary w-full">Add bundles</button>
+        </form>
 
-        </div>
+        <form v-if="select_option.some(e => e === 'color')" @submit.prevent="uploadColors">
+          <p class="text-base py-2 border-b border-blue-200">Items color</p>
+          <div class="flex" v-for="(color,index) in options.colors" :key="index">
+            <div class="w-full pr-2">
+              <div class="my-2">
+                <label :for="`colorname${index}`">Color name</label>
+                <input type="text" :id="`colorname${index}`" v-model.trim="color.name">
+                <small class="text-red-500 tracking-wider"
+                       v-if=" !$v.options.colors.$each[index].name.required">
+                  Items color is required </small>
+                <small class="text-red-500 tracking-wider"
+                       v-if="!$v.options.colors.$each[index].name.validString">
+                  String support only a-z/A-Z/0-9 only
+                </small>
+              </div>
+              <div class="my-2">
+                <label :for="`colorprice${index}`">color price</label>
+                <input type="number" :id="`colorprice${index}`" v-model.trim.number="color.price">
+
+                <small class="text-red-500 tracking-wider"
+                       v-if=" !$v.options.colors.$each[index].price.price">
+                  Price should be 1000 or 1000.20. </small>
+                <small class="text-red-500 tracking-wider"
+                       v-if="!$v.options.colors.$each[index].price.positiveInteger">
+                  Price should be more then 1.
+                </small>
+              </div>
+            </div>
+            <div class="self-center p-2 ">
+              <p v-if="index === options.colors.length -1" @click="increaseColor" class="p-2 my-1 cursor-pointer rounded shadow bg-gray-100"><a-icon type="plus" /></p>
+              <p v-if="options.colors.length > 1" @click="decreaseColor(index)" class="p-2 my-1 cursor-pointer rounded shadow bg-gray-100"><a-icon type="delete" /></p>
+            </div>
+          </div>
+          <button type="submit" class="md:btn btn-sm btn-primary w-full">Add Colors</button>
+        </form>
+
+        <form v-if="select_option.some(e => e === 'size')" @submit.prevent="uploadSizes">
+          <p class="text-base py-2 border-b border-blue-200">Items size</p>
+          <div class="flex" v-for="(size,index) in options.sizes" :key="index">
+            <div class="w-full pr-2">
+              <div class="my-2">
+                <label :for="`sizename${index}`">Size name</label>
+                <input type="text" :id="`sizename${index}`" v-model.trim="size.name">
+                <small class="text-red-500 tracking-wider"
+                       v-if="!$v.options.sizes.$each[index].name.required">
+                  Size name is required
+                </small>
+                <small class="text-red-500 tracking-wider"
+                       v-if="!$v.options.sizes.$each[index].name.validString">
+                  String support only a-z/A-Z/0-9 , _ only
+                </small>
+              </div>
+              <div class="my-2">
+                <label :for="`sizeprice${index}`">color price</label>
+                <input type="number" :id="`sizeprice${index}`" v-model.trim.number="size.price">
+
+                <small class="text-red-500 tracking-wider"
+                       v-if=" !$v.options.sizes.$each[index].price.price">
+                  Price should be 1000 or 1000.20. </small>
+                <small class="text-red-500 tracking-wider"
+                       v-if="!$v.options.sizes.$each[index].price.positiveInteger">
+                  Price should be more then 1.
+                </small>
+              </div>
+            </div>
+            <div class="self-center p-2 ">
+              <p v-if="index === options.sizes.length -1" @click="increaseSize" class="p-2 my-1 cursor-pointer rounded shadow bg-gray-100"><a-icon type="plus" /></p>
+              <p v-if="options.sizes.length > 1" @click="decreaseSize(index)" class="p-2 my-1 cursor-pointer rounded shadow bg-gray-100"><a-icon type="delete" /></p>
+            </div>
+          </div>
+          <button type="submit" class="md:btn btn-sm btn-primary w-full">Add sizes</button>
+        </form>
+        <form v-if="select_option.some(e => e === 'custom')" @submit.prevent="uploadCustom">
+          <p class="text-base py-2 border-b border-blue-200">Items size</p>
+          <div class="my-3">
+            <label for="customOption" class="md:text-base text-sm">Option name</label>
+            <small class="tracking-wider block">Like: bundle, color, size are name of option. Please enter your custom option name</small>
+            <input type="text" id="customOption" v-model.trim="$v.customName.$model">
+            <small class="text-red-500 tracking-wider"
+                   v-if="!$v.customName.required">Required. Please add your custom option name. </small>
+            <small class="text-red-500 tracking-wider"
+                   v-if="!$v.customName.nameValid ">(A-Z a-z 0-9 , _ ) this symbol are allow. </small>
+          </div>
+          <div class="flex" v-for="(cust,index) in options.custom" :key="index">
+            <div class="w-full pr-2">
+              <div class="my-2">
+                <label :for="`customname${index}`">Custom option item/name</label>
+                <input type="text" :id="`customname${index}`" v-model.trim="cust.name">
+                <small class="text-red-500 tracking-wider"
+                       v-if="!$v.options.custom.$each[index].name.required">
+                  Custom option is required
+                </small>
+                <small class="text-red-500 tracking-wider"
+                       v-if="!$v.options.custom.$each[index].name.validString">
+                  String support only a-z/A-Z/0-9 , _ only
+                </small>
+              </div>
+              <div class="my-2">
+                <label :for="`customprice${index}`">Item/Name price</label>
+                <input type="number" :id="`customprice${index}`" v-model.number="cust.price">
+
+                <small class="text-red-500 tracking-wider"
+                       v-if=" !$v.options.custom.$each[index].price.price">
+                  Price should be 1000 or 1000.20. </small>
+                <small class="text-red-500 tracking-wider"
+                       v-if="!$v.options.custom.$each[index].price.positiveInteger">
+                  Price should be more then 1.
+                </small>
+              </div>
+            </div>
+            <div class="self-center p-2 ">
+              <p v-if="index === options.custom.length -1" @click="increaseCustom" class="p-2 my-1 cursor-pointer rounded shadow bg-gray-100"><a-icon type="plus" /></p>
+              <p v-if="options.custom.length > 1" @click="decreaseCustom(index)" class="p-2 my-1 cursor-pointer rounded shadow bg-gray-100"><a-icon type="delete" /></p>
+            </div>
+          </div>
+          <button type="submit" class="md:btn btn-sm btn-primary w-full">Add sizes</button>
+        </form>
       </div>
     </a-modal>
   </div>
@@ -322,16 +485,13 @@
   import Vuelidate from 'vuelidate'
   import { validationMixin } from 'vuelidate'
   import { requiredIf, required, minLength, maxLength } from 'vuelidate/lib/validators'
-
+  import {Modal}   from 'ant-design-vue';
+  Vue.use(Modal)
   const positiveInteger = (value) => value > 0 || value === ''
   const onlyinteger = (value) => value === '' || value === 0 || /^[1-9][\d]*$/.test(value)
 
   import DateRangePicker from 'vue2-daterange-picker'
   import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
-  import wysiwyg from 'vue-wysiwyg'
-
-  Vue.use(wysiwyg, {})
-  import 'vue-wysiwyg/dist/vueWysiwyg.css'
 
   export default {
     mixins: [validationMixin],
@@ -355,15 +515,117 @@
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
       const minDate = new Date(today).toJSON()
       return {
+        select_option: [],
         tag: '',
         min: minDate,
         modal: {
-            options: 0
+          options: 0
         },
+        customName: '',
+        options: {
+          bundles: [
+            {
+              name: '',
+              price: '',
+            }
+          ],
+          colors: [
+            {
+              name: '',
+              price: '',
+            }
+          ],
+          sizes: [
+            {
+              name: '',
+              price: '',
+            }
+          ],
+          custom: [
+            {
+              name: '',
+              price: '',
+            }
+          ],
+
+        }
         // product: '',
       }
     },
     validations: {
+      customName: {
+        required,
+        nameValid(value){
+          return /^[a-zA-Z0-9_, ]*$/.test(value)
+        }
+      },
+      options: {
+        bundles: {
+          $each: {
+            name: {
+              required,
+              validString(value) {
+                return /^[a-zA-Z0-9_, ]*$/.test(value) || value === ''
+              }
+            },
+            price: {
+              required,
+              positiveInteger,
+              price(value) {
+                return /^\d+(\.\d{1,2})?$/.test(value) || value === ''
+              }
+            },
+          }
+        },
+        colors: {
+          $each: {
+            name: {
+              required,
+              validString(value) {
+                return /^[a-zA-Z0-9_, ]*$/.test(value) || value === ''
+              }
+            },
+            price: {
+              positiveInteger,
+              price(value) {
+                return /^\d+(\.\d{1,2})?$/.test(value) || value === ''
+              }
+            },
+          }
+        },
+        sizes: {
+          $each: {
+            name: {
+              required,
+              validString(value) {
+                return /^[a-zA-Z0-9_, ]*$/.test(value) || value === ''
+              }
+            },
+            price: {
+              positiveInteger,
+              price(value) {
+                return /^\d+(\.\d{1,2})?$/.test(value) || value === ''
+              }
+            },
+          }
+        },
+        custom: {
+          $each: {
+            name: {
+              required,
+              validString(value) {
+                return /^[a-zA-Z0-9_, ]*$/.test(value) || value === ''
+              }
+            },
+            price: {
+              positiveInteger,
+              price(value) {
+                return /^\d+(\.\d{1,2})?$/.test(value) || value === ''
+              }
+            },
+          }
+        },
+      },
       tag: {
         tagValid(value) {
           return /^([a-zA-Z0-9 ]+)(\s[a-zA-Z0-9 ]+)*$/.test(value) || value === ''
@@ -373,6 +635,32 @@
         options: {
           $each: {
             options: {
+              $each: {
+                name: {
+                  required
+                },
+                price: {
+                  positiveInteger,
+                  price(value) {
+                    return /^\d+(\.\d{1,2})?$/.test(value) || value === ''
+                  }
+                }
+              }
+            },
+            colors: {
+              $each: {
+                name: {
+                  required
+                },
+                price: {
+                  positiveInteger,
+                  price(value) {
+                    return /^\d+(\.\d{1,2})?$/.test(value) || value === ''
+                  }
+                }
+              }
+            },
+            sizes: {
               $each: {
                 name: {
                   required
@@ -481,37 +769,236 @@
       }
     },
     methods: {
-      cancelOptionModal(){
+      changeBundle(){
+        let available = false
+        let index = 0
+        this.select_option.forEach((e,indexe) => {
+          if (e === 'bundle'){
+            available = true
+            index = indexe
+          }
+        })
+        if (available){
+          this.select_option.splice(index,1)
+        } else {
+          this.select_option.push('bundle')
+        }
+      },
+      changeColor(){
+        let available = false
+        let index = 0
+        this.select_option.forEach((e,indexe) => {
+          if (e === 'color'){
+            available = true
+            index = indexe
+          }
+        })
+        if (available){
+          this.select_option.splice(index,1)
+        } else {
+          this.select_option.push('color')
+        }
+      },
+      changeSize(){
+        let available = false
+        let index = 0
+        this.select_option.forEach((e,indexe) => {
+          if (e === 'size'){
+            available = true
+            index = indexe
+          }
+        })
+        if (available){
+          this.select_option.splice(index,1)
+        } else {
+          this.select_option.push('size')
+        }
+      },
+      changeCustom(){
+        let available = false
+        let index = 0
+        this.select_option.forEach((e,indexe) => {
+          if (e === 'custom'){
+            available = true
+            index = indexe
+          }
+        })
+        if (available){
+          this.select_option.splice(index,1)
+        } else {
+          this.select_option.push('custom')
+        }
+      },
+      uploadBundle(){
+        this.$v.options.bundles.$touch()
+        if (!this.$v.options.bundles.$invalid){
+          this.$axios.post(`/api/seller/${this.product.id}/option/bundle`,{
+            bundles: this.options.bundles
+          })
+          .then(res => {
+            this.product.options.push(res.data.data)
+          })
+        }
+      },
+      uploadColors(){
+        this.$v.options.colors.$touch()
+        if (!this.$v.options.colors.$invalid){
+          this.$axios.post(`/api/seller/${this.product.id}/option/color`,{
+            colors: this.options.colors
+          })
+          .then(res => {
+            this.product.options.push(res.data.data)
+          })
+        }
+      },
+      uploadSizes(){
+        this.$v.options.sizes.$touch()
+        if (!this.$v.options.sizes.$invalid){
+          this.$axios.post(`/api/seller/${this.product.id}/option/size`,{
+            sizes: this.options.sizes
+          })
+            .then(res => {
+              this.product.options.push(res.data.data)
+              this.options.sizes = [{
+                name : '',
+                price: ''
+              }]
+            })
+        }
+      },
+      uploadCustom(){
+        this.$v.options.custom.$touch()
+        this.$v.customName.$touch()
+        if (!this.$v.options.custom.$invalid && !this.$v.customName.$invalid){
+          this.$axios.post(`/api/seller/${this.product.id}/option/custom`,{
+            custom: this.options.custom,
+            option: this.customName
+          }) .then(res => {
+            this.product.options.push(res.data.data)
+            this.options.custom = [{
+              name : '',
+              price: ''
+            }]
+          }) .catch(err => {
+            if (err.response.status === 422){
+              this.$store.commit('SET_SERVER_ERRORS',err.response.data)
+            }
+          })
+        }
+      },
+      increaseBundle(){
+        this.options.bundles.push({
+          items: '',
+          price: '',
+        })
+      },
+      increaseColor(){
+        this.options.colors.push({
+          items: '',
+          price: '',
+        })
+      },
+      increaseSize(){
+        this.options.sizes.push({
+          items: '',
+          price: '',
+        })
+      },
+      increaseCustom(){
+        this.options.custom.push({
+          items: '',
+          price: '',
+        })
+      },
+      decreaseBundle(index){
+        if (this.options.bundles.length > 1){
+          this.$swal({
+            title: 'Confirmation!',
+            text: 'Do you want to delete this bundle',
+            confirmButtonText: 'Delete'
+          })
+            .then((result) => {
+              if (result.value) {
+                this.options.bundles.splice(index,1)
+              }
+            })
+
+        }
+      },
+      decreaseCustom(index){
+        if (this.options.custom.length > 1){
+          this.$swal({
+            title: 'Confirmation!',
+            text: 'Do you want to delete this option',
+            confirmButtonText: 'Delete'
+          })
+            .then((result) => {
+              if (result.value) {
+                this.options.custom.splice(index,1)
+              }
+            })
+        }
+      },
+      decreaseSize(index){
+        if (this.options.sizes.length > 1){
+          this.$swal({
+            title: 'Confirmation!',
+            text: 'Do you want to delete this size',
+            confirmButtonText: 'Delete'
+          })
+            .then((result) => {
+              if (result.value) {
+                this.options.sizes.splice(index,1)
+              }
+            })
+        }
+      },
+      decreaseColor(index){
+        if (this.options.colors.length > 1){
+          this.$swal({
+            title: 'Confirmation!',
+            text: 'Do you want to delete this color',
+            confirmButtonText: 'Delete'
+          })
+            .then((result) => {
+              if (result.value) {
+                this.options.colors.splice(index,1)
+              }
+            })
+
+        }
+      },
+      cancelOptionModal() {
         this.modal.options = 0
       },
-      optionImageUpdate(optionId, childId,index,optIndex){
+      optionImageUpdate(optionId, childId, index, optIndex) {
 
         // this.$axios.post(`/api/seller/${this.product.id}/${optionId}/${childId}/image`)
-        this.$store.commit('SET_SERVER_ERRORS','')
-        let formData = new FormData();
-        formData.append('image',event.target.files[0])
-        this.$axios.post(`/api/seller/${this.product.id}/${optionId}/${childId}/image`,formData)
+        this.$store.commit('SET_SERVER_ERRORS', '')
+        let formData = new FormData()
+        formData.append('image', event.target.files[0])
+        this.$axios.post(`/api/seller/${this.product.id}/${optionId}/${childId}/image`, formData)
           .then(res => {
-            this.product.options[index].options.splice(optIndex,1,res.data.data)
-          }) .catch(err => {
+            this.product.options[index].options.splice(optIndex, 1, res.data.data)
+          }).catch(err => {
           if (err.response.status === 422) {
-            this.$store.commit('SET_SERVER_ERRORS',err.response.data)
+            this.$store.commit('SET_SERVER_ERRORS', err.response.data)
           }
         })
       },
-      updateOptionInfo(OptionId,index){
+      updateOptionInfo(OptionId, index) {
         this.$v.product.options.$each[index].options.$touch()
-        if (!this.$v.product.options.$each[index].options.$invalid){
+        if (!this.$v.product.options.$each[index].options.$invalid) {
           let items = []
-          for (let i = 0; i <this.product.options[index].options.length ; i++) {
+          for (let i = 0; i < this.product.options[index].options.length; i++) {
             items.push({
-              'id' : this.product.options[index].options[i].id,
-              'name' : this.product.options[index].options[i].name,
-              'price' : this.product.options[index].options[i].price,
+              'id': this.product.options[index].options[i].id,
+              'name': this.product.options[index].options[i].name,
+              'price': this.product.options[index].options[i].price
             })
           }
 
-          this.$axios.post(`/api/seller/${this.product.id}/${OptionId}/option/update`,{
+          this.$axios.post(`/api/seller/${this.product.id}/${OptionId}/option/update`, {
             options: items
           })
         }
@@ -757,7 +1244,6 @@
         this.$swal({
           title: 'Confirmation!',
           text: 'Do you want to delete product image',
-          icon: 'error',
           confirmButtonText: 'Delete'
         })
           .then((result) => {

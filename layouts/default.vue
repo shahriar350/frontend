@@ -1,6 +1,6 @@
 <template>
 
-  <perfect-scrollbar>
+  <perfect-scrollbar ref="scroll">
     <div class="bg-gray-100 scroll-me" >
 
       <top_section></top_section>
@@ -14,7 +14,11 @@
   import { PerfectScrollbar } from 'vue2-perfect-scrollbar'
 
   export default {
-
+    watch: {
+      $route() {
+        this.$refs.scroll.$el.scrollTop = 0;
+      }
+    },
     components: { top_section,PerfectScrollbar }
   }
 </script>

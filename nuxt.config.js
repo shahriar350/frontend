@@ -1,6 +1,6 @@
-
 export default {
   target: 'static',
+
   server: {
     port: 3000, // default: 3000
     host: 'localhost' // default: localhost
@@ -20,6 +20,10 @@ export default {
   */
   head: {
     title: process.env.npm_package_name || '',
+    htmlAttrs: {
+      class: 'has-navbar-fixed-top',
+      lang: 'en'
+    },
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -37,7 +41,7 @@ export default {
   ** Global CSS
   */
   css: [
-    '@/assets/css/master.css',
+    '@/assets/css/master.css'
     // '@/assets/boxicons/css/boxicons.min.css'
   ],
   /*
@@ -48,7 +52,10 @@ export default {
     '@/plugins/mixins/user',
     { src: '~/plugins/laravel-echo', ssr: false },
     { src: '~/plugins/editor', ssr: false },
+    { src: '~/plugins/zoomOnHover', ssr: false },
     '~/plugins/ant',
+    '~/plugins/axios',
+
   ],
 
   /*
@@ -60,7 +67,7 @@ export default {
     '@nuxtjs/moment'
   ],
   moment: {
-    defaultTimezone: 'Asia/Dhaka',
+    defaultTimezone: 'Asia/Dhaka'
   },
   /*
   ** Nuxt.js modules
@@ -70,8 +77,13 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/auth',
     'nuxt-sweetalert2',
-    ['@nuxtjs/component-cache', { maxAge: 1000 * 60 * 60 }],
-
+    'nuxt-purgecss',
+    ['@nuxtjs/component-cache',
+      {
+        max: 10000,
+        maxAge: 1000 * 60 * 60
+      }
+    ]
   ],
   /*
   ** Axios module configuration
@@ -80,9 +92,9 @@ export default {
   axios: {
     proxy: true,
     withCredentials: true,
-    plugins: [
-      '~/plugins/axios401.js'
-    ]
+    // plugins: [
+    //   '~/plugins/axios.js',
+    // ]
   },
   proxy: {
     '/api/': { target: 'http://127.0.0.1:8000/api', pathRewrite: { '^/api': '' } }
@@ -119,8 +131,15 @@ export default {
   ** Build configuration
   ** See https://nuxtjs.org/api/configuration-build/
   */
+  purgeCSS: {
+    // whitelist: ['html', 'body', 'has-navbar-fixed-top', 'nuxt-link-exact-active', 'nuxt-progress'],
+    content: ['./pages/**/*.vue', './layouts/**/*.vue', './components/**/*.vue', './content/**/*.md', './content/**/*.json'],
+    whitelist: ['html', 'body', 'has-navbar-fixed-top', 'nuxt-link-exact-active', 'nuxt-link-active', 'nuxt-progress'],
+    whitelistPatternsChildren: [/svg-inline--fa/, /__layout/, /__nuxt/]
+  },
 
   build: {
-  },
+    analyze: true
+  }
 
 }

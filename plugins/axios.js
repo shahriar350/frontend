@@ -1,7 +1,8 @@
 export default function ({ $axios, redirect }) {
   $axios.onError(error => {
-    if(error.response.status === 401) {
+    const code = parseInt(error.response && error.response.status)
+    if (code === 401) {
       redirect('/auth/login')
     }
-  });
+  })
 }

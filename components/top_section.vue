@@ -16,12 +16,12 @@
               <a-sub-menu>
                 <span slot="title"><a-icon
                   type="setting"/>{{ user.name }}</span>
-                <a-menu-item-group title="Item 1">
+                <a-menu-item-group>
                   <a-menu-item key="setting:1">
-
+                   <nuxt-link to="/user/order">My Orders</nuxt-link>
                   </a-menu-item>
                   <a-menu-item key="setting:2">
-                    Option 2
+                    Profile
                   </a-menu-item>
                 </a-menu-item-group>
               </a-sub-menu>
@@ -34,7 +34,7 @@
 
         </div>
         <div v-if="auth && user.seller" class="set_center bg-white px-2">
-          <n-link to="/seller">Seller</n-link>
+          <nuxt-link active-class="font-bold" to="/seller">Seller</nuxt-link>
         </div>
       </div>
     </div>
@@ -49,26 +49,40 @@
       </div>
       <div class="md:col-span-2 sm:col-span-6 col-span-5 flex justify-end items-center gap-5">
         <a-icon type="heart" :style="{fontSize: '30px'}" />
-        <a-badge :count="5" :number-style="{backgroundColor: '#fff',color: '#999',boxShadow: '0 0 0 1px #d9d9d9 inset',}">
-          <a-icon type="shopping-cart" :style="{ fontSize: '30px', color: '#08c' }" />
-        </a-badge>
+        <nuxt-link to="/user/cart">
+          <a-badge class="cursor-pointer" :count="cart_count" :number-style="{backgroundColor: '#fff',color: '#999',boxShadow: '0 0 0 1px #d9d9d9 inset',}">
+            <a-icon type="shopping-cart" :style="{ fontSize: '30px', color: '#08c' }" />
+          </a-badge>
+        </nuxt-link>
+
       </div>
     </div>
   </div>
 </template>
 <script>
-
+  import Vue from 'vue'
+  import {Icon}   from 'ant-design-vue';
+  Vue.use(Icon)
   export default {
     data() {
       return {
       }
     },
-    computed: {},
+    beforeCreate() {
+      this.$axios.get('/api/user/cart/product/count')
+        .then(res => this.$store.commit('cart_store/SET_TO_CART',res.data))
+    },
+    computed: {
+      cart_count(){
+        return this.$store.state.cart_store.items
+      }
+    },
     methods: {}
   }
 </script>
 
 <style lang="less">
+
   .set_center{
     display: flex !important;
     align-items: center;

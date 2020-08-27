@@ -167,7 +167,6 @@
           <select v-model="$v.product.offer.typeOffer.$model" id="offer_type"
                   class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
             <option value="" selected>Select One (none)</option>
-            <option value="fixed">Fixed Price</option>
             <option value="percent">Percentage %</option>
           </select>
           <small class="text-red-500 tracking-wider"
@@ -204,12 +203,6 @@
             </date-range-picker>
             <p @click="resetOfferPrice" class="focus:bg-blue-200 cursor-pointer p-2 flex items-center">Reset</p>
           </div>
-<!--          <small class="text-red-500 tracking-wider"-->
-<!--                 v-if="!$v.product.offer.offerTime.endDate.required && !$v.product.offer.offerTime.startDate.required">Add-->
-<!--            your product offer start and end date </small>-->
-
-          <!--          <small class="text-red-500 tracking-wider"-->
-          <!--                 v-if="!$v.product.offer.checkOffer && product.offer.minimum === ''">Minimum product buy to </small>-->
         </div>
 
       </div>
@@ -238,10 +231,6 @@
   import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
   import server_error from '../../../../components/server_error'
-
-  import wysiwyg from 'vue-wysiwyg'
-  Vue.use(wysiwyg, {})
-  import 'vue-wysiwyg/dist/vueWysiwyg.css'
 
   import DateRangePicker from 'vue2-daterange-picker'
   import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
@@ -322,10 +311,6 @@
             }),
           },
           active: {},
-          // checkOffer: function(value) {
-          //   return ((value.price === '' && value.minimum === '' && value.typeOffer === '' && value.offerTime.endDate === null && value.offerTime.startDate === null) ||
-          //     (value.price !== '' && value.minimum !== '' && value.typeOffer !== '' && value.offerTime.endDate !== null && value.offerTime.startDate !== null))
-          // },
           price: {
             required: requiredIf(function(val) {
               return val.active === 1

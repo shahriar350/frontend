@@ -4,27 +4,33 @@
       <a-menu
         :default-selected-keys="[$route.path]"
         :mode="screenWidth <= 768 ? 'inline' : 'horizontal'">
-        <a-menu-item key="/seller">
-          <nuxt-link to="/seller">
+        <a-menu-item key="/seller/dashboard" :class="{'ant-menu-item-selected' : ($route.path === '/seller/dashboard')}">
+          <nuxt-link to="/seller/dashboard" active-class="font-bold">
             <a-icon type="home" />
           <span>Dashboard</span>
           </nuxt-link>
         </a-menu-item>
 
-        <a-menu-item key="/seller/shop">
-          <nuxt-link to="/seller/shop">
+        <a-menu-item key="/seller/shop/*" :class="{'ant-menu-item-selected' : ($route.path === '/seller/shop/*')}">
+          <nuxt-link to="/seller/shop" active-class="font-bold">
             <a-icon type="shop" />
             <span>Shop</span>
           </nuxt-link>
         </a-menu-item>
 
-        <a-menu-item key="/seller/product">
-          <nuxt-link to="/seller/product">
+        <a-menu-item key="/seller/product/*" :class="{'ant-menu-item-selected' : ($route.path === '/seller/product/*')}">
+          <nuxt-link to="/seller/product" active-class="font-bold">
             <a-icon type="snippets" />
             <span>Product</span>
           </nuxt-link>
         </a-menu-item>
 
+        <a-menu-item key="/seller/product/order" :class="{'ant-menu-item-selected' : ($route.path === '/seller/product/order')}">
+          <nuxt-link to="/seller/product/order" active-class="font-bold">
+            <a-icon type="snippets" />
+            <span>Order</span>
+          </nuxt-link>
+        </a-menu-item>
 <!--        <a-sub-menu key="sub1">-->
 <!--          <span slot="title"><a-icon type="mail" /><span>Navigation One</span></span>-->
 <!--          <a-menu-item key="5">-->
@@ -54,6 +60,7 @@
     middleware: [
       'auth','is_seller'
     ],
+
   }
 </script>
 

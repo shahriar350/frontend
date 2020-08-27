@@ -24,7 +24,9 @@
     "nuxt-sweetalert2": "^1.0.0",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
-    "vue-wysiwyg": "^1.7.2",
+    "v-lazy-image": "^1.4.0",
+    "vue-zoom-on-hover": "^1.0.2",
+    "vue-zoomer": "^0.3.6",
     "vue2-daterange-picker": "^0.5.1",
     "vue2-editor": "^2.10.2",
     "vue2-perfect-scrollbar": "^1.5.0",
@@ -36,6 +38,7 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
     "gh-pages": "^3.1.0",
+    "nuxt-purgecss": "^1.0.0",
     "prettier": "^2.0.5",
     "push-dir": "^0.4.1"
   }
